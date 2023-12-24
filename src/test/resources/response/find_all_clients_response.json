@@ -1,0 +1,20 @@
+{
+  "clients" : [
+    {
+      "id" : 1,
+      "name": "Client 1",
+      "orders": []
+    },
+    {
+      "id" : 2,
+      "name": "Client 2",
+      "orders": [
+        {
+          "id": 1,
+          "product": "Test product 1",
+          "cost": 100
+        }
+      ]
+    }
+  ]
+}
