@@ -1,4 +1,4 @@
-package ru.denisov.RestControllerPractice.mapper.v1;
+package ru.denisov.RestControllerPractice.web.mapper.v1;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

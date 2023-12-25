@@ -55,7 +55,7 @@ public class InMemoryClientRepository implements ClientRepository {
             );
         }
         BeanUtils.copyNonNullProperties(client, currentClient);
-        currentClient.setId(clientId);
+        //currentClient.setId(clientId);
         repository.put(clientId, currentClient);
         return currentClient;
     }

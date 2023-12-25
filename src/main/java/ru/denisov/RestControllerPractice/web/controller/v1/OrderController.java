@@ -1,10 +1,10 @@
-package ru.denisov.RestControllerPractice.web.v1;
+package ru.denisov.RestControllerPractice.web.controller.v1;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.denisov.RestControllerPractice.mapper.v1.OrderMapper;
+import ru.denisov.RestControllerPractice.web.mapper.v1.OrderMapper;
 import ru.denisov.RestControllerPractice.model.Order;
 import ru.denisov.RestControllerPractice.service.OrderService;
 import ru.denisov.RestControllerPractice.web.model.OrderListResponse;

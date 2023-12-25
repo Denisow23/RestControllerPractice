@@ -24,9 +24,9 @@ public class ClientServiceImpl implements ClientService {
     public Client findById(Long id) {
         return clientRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        MessageFormat.format("Клиент с ID {} не найден",id)
-                )
-        );
+                        MessageFormat.format("Клиент с ID {0} не найден", id)
+                        )
+                );
     }
 
     @Override

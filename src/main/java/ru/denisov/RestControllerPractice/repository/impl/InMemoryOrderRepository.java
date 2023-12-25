@@ -44,9 +44,9 @@ public class InMemoryOrderRepository implements OrderRepository {
         Long orderId = currentId.getAndIncrement();
         Long clientId = order.getClient().getId();
         Client client = clientRepository.findById(clientId)
-                .orElseThrow(() -> new EntityNotFoundException("Пользователь не найден"));
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь не найден!")); // Зачем она здесь???
 
-        order.setClient(client);
+//        order.setClient(client); Зачем здесь везде сеттеры???
         order.setId(orderId);
         Instant now = Instant.now();
         order.setCreateAt(now);
@@ -69,14 +69,14 @@ public class InMemoryOrderRepository implements OrderRepository {
 
         if(currentOrder == null){
             throw new EntityNotFoundException(
-                    MessageFormat.format("Заказ по ID {} не найден!", orderId)
+                    MessageFormat.format("Заказ по ID {0} не найден!", orderId)
             );
         }
 
         BeanUtils.copyNonNullProperties(order, currentOrder);
 
         currentOrder.setUpdateAt(now);
-        currentOrder.setId(orderId);
+//        currentOrder.setId(orderId);
 
         repository.put(orderId, currentOrder);
 

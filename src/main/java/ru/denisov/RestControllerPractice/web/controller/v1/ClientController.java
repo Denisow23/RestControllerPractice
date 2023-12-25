@@ -1,10 +1,11 @@
-package ru.denisov.RestControllerPractice.web.v1;
+package ru.denisov.RestControllerPractice.web.controller.v1;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.denisov.RestControllerPractice.mapper.v1.ClientMapper;
+import ru.denisov.RestControllerPractice.web.mapper.v1.ClientMapper;
 import ru.denisov.RestControllerPractice.model.Client;
 import ru.denisov.RestControllerPractice.service.ClientService;
 import ru.denisov.RestControllerPractice.web.model.ClientListResponse;
@@ -35,7 +36,7 @@ public class ClientController {
     }
 
     @PostMapping
-    public ResponseEntity<ClientResponse> create(@RequestBody UpsertClientRequest request) {
+    public ResponseEntity<ClientResponse> create(@RequestBody @Valid UpsertClientRequest request) {
         Client newClient = clientService.save(clientMapper.requestToClient(request));
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -56,4 +57,9 @@ public class ClientController {
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+//    @ExceptionHandler(EntityNotFoundException.class)
+//    public ResponseEntity<Void> notFoundHandler(EntityNotFoundException ex) {
+//        return ResponseEntity.notFound().build();
+//    }
 }
