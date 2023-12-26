@@ -60,7 +60,7 @@ public class ClientControllerTest extends AbstractTestController {
                 .getResponse()
                 .getContentAsString();
 
-        String expectedResponse = StringTestUtils.readStringFromResource("response/find_all_clients_response.json");
+        String expectedResponse = StringTestUtils.readStringFromResource("response/ClientControllerTest/find_all_clients_response.json");
 
         Mockito.verify(clientService, Mockito.times(1)).findAll();
         Mockito.verify(clientMapper, Mockito.times(1)).clientListToClientResponseList(clients);
@@ -83,7 +83,7 @@ public class ClientControllerTest extends AbstractTestController {
                 .getResponse()
                 .getContentAsString();
 
-        String expectedResponse = StringTestUtils.readStringFromResource("response/find_client_by_id_response.json");
+        String expectedResponse = StringTestUtils.readStringFromResource("response/ClientControllerTest/find_client_by_id_response.json");
 
         Mockito.verify(clientService, Mockito.times(1)).findById(1L);
         Mockito.verify(clientMapper, Mockito.times(1)).clientToResponse(client);
@@ -99,8 +99,8 @@ public class ClientControllerTest extends AbstractTestController {
         ClientResponse clientResponse = createClientResponse(1L, null);
         UpsertClientRequest request = new UpsertClientRequest("Client 1");
 
-        Mockito.when(clientService.save(client)).thenReturn(createdClient);
         Mockito.when(clientMapper.requestToClient(request)).thenReturn(client);
+        Mockito.when(clientService.save(client)).thenReturn(createdClient);
         Mockito.when(clientMapper.clientToResponse(createdClient)).thenReturn(clientResponse);
 
         String actualResponse = mockMvc.perform(post("/api/v1/client")
@@ -111,10 +111,10 @@ public class ClientControllerTest extends AbstractTestController {
                 .getResponse()
                 .getContentAsString();
 
-        String expectedResponse = StringTestUtils.readStringFromResource("response/create_client_response.json");
+        String expectedResponse = StringTestUtils.readStringFromResource("response/ClientControllerTest/create_client_response.json");
 
-        Mockito.verify(clientService, Mockito.times(1)).save(client);
         Mockito.verify(clientMapper, Mockito.times(1)).requestToClient(request);
+        Mockito.verify(clientService, Mockito.times(1)).save(client);
         Mockito.verify(clientMapper, Mockito.times(1)).clientToResponse(createdClient);
 
         JsonAssert.assertJsonEquals(expectedResponse, actualResponse);
@@ -126,8 +126,8 @@ public class ClientControllerTest extends AbstractTestController {
         Client updatedClient = new Client(1L, "New Client 1", new ArrayList<>());
         ClientResponse clientResponse = new ClientResponse(1L, "New Client 1", new ArrayList<>());
 
-        Mockito.when(clientService.update(updatedClient)).thenReturn(updatedClient);
         Mockito.when(clientMapper.requestToClient(1L, request)).thenReturn(updatedClient);
+        Mockito.when(clientService.update(updatedClient)).thenReturn(updatedClient);
         Mockito.when(clientMapper.clientToResponse(updatedClient)).thenReturn(clientResponse);
 
         String actualResponse = mockMvc.perform(put("/api/v1/client/1")
@@ -138,7 +138,7 @@ public class ClientControllerTest extends AbstractTestController {
                 .getResponse()
                 .getContentAsString();
 
-        String expectedResponse = StringTestUtils.readStringFromResource("response/update_client_response.json");
+        String expectedResponse = StringTestUtils.readStringFromResource("response/ClientControllerTest/update_client_response.json");
 
         Mockito.verify(clientService, Mockito.times(1)).update(updatedClient);
         Mockito.verify(clientMapper, Mockito.times(1)).requestToClient(1L, request);
@@ -168,7 +168,7 @@ public class ClientControllerTest extends AbstractTestController {
         response.setCharacterEncoding("UTF-8");
 
         String actualResponse = response.getContentAsString();
-        String expectedResponse = StringTestUtils.readStringFromResource("response/client_by_id_not_found_response.json");
+        String expectedResponse = StringTestUtils.readStringFromResource("response/ClientControllerTest/client_by_id_not_found_response.json");
 
         Mockito.verify(clientService, Mockito.times(1)).findById(500L);
 
@@ -186,7 +186,7 @@ public class ClientControllerTest extends AbstractTestController {
         response.setCharacterEncoding("UTF-8");
 
         String actualResponse = response.getContentAsString();
-        String expectedResponse = StringTestUtils.readStringFromResource("response/empty_client_name_response.json");
+        String expectedResponse = StringTestUtils.readStringFromResource("response/ClientControllerTest/empty_client_name_response.json");
 
         JsonAssert.assertJsonEquals(expectedResponse, actualResponse);
     }
@@ -210,7 +210,7 @@ public class ClientControllerTest extends AbstractTestController {
         response.setCharacterEncoding("UTF-8");
 
         String actualResponse = response.getContentAsString();
-        String expectedResponse = StringTestUtils.readStringFromResource("response/client_name_size_exception_response.json");
+        String expectedResponse = StringTestUtils.readStringFromResource("response/ClientControllerTest/client_name_size_exception_response.json");
 
         JsonAssert.assertJsonEquals(expectedResponse, actualResponse);
     }

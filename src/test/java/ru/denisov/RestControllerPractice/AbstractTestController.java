@@ -41,6 +41,7 @@ public abstract class AbstractTestController {
     protected Order createOrder(Long id, Long cost, Client client) {
         return new Order(id, "Test product " + id,
                 BigDecimal.valueOf(cost), client,
+//        null, null);
                 Instant.now(), Instant.now());
     }
 

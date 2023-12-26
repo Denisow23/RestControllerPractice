@@ -11,10 +11,7 @@ import ru.denisov.RestControllerPractice.repository.utils.BeanUtils;
 
 import java.text.MessageFormat;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -85,6 +82,16 @@ public class InMemoryOrderRepository implements OrderRepository {
 
     @Override
     public void deleteById(Long id) {
+        Order order = repository.get(id);
+
+        if (Objects.isNull(order)) {
+            throw new EntityNotFoundException(
+                    MessageFormat.format(
+                            "Заказа с ID {0} не существует!", id
+                    )
+            );
+        }
+
         repository.remove(id);
     }
 

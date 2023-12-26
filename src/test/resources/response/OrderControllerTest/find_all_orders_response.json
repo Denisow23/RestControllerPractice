@@ -1,0 +1,14 @@
+{
+  "orders": [
+    {
+      "id": 1,
+      "product": "Test product 1",
+      "cost": 500
+    },
+    {
+      "id": 2,
+      "product": "Test product 2",
+      "cost": 1000
+    }
+  ]
+}
