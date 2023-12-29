@@ -9,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.denisov.RestControllerPractice.repository.exception.EntityNotFoundException;
+import ru.denisov.RestControllerPractice.service.exception.UpdateStateException;
 import ru.denisov.RestControllerPractice.web.model.ErrorResponse;
 
 import java.util.List;
@@ -37,6 +38,14 @@ public class ExceptionHandlerController {
         String errorMessage = String.join("; ", errorMessages);
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(errorMessage));
+    }
+
+    @ExceptionHandler(UpdateStateException.class)
+    public ResponseEntity<ErrorResponse> notValidUpdate(UpdateStateException ex) {
+        log.error("Ошибка при попытке обновить заказ!", ex);
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(ex.getMessage()));
     }
 
 }

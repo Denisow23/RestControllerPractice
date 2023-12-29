@@ -62,7 +62,7 @@ public class OrderServiceImpl implements OrderService {
 
         Duration duration = Duration.between(currentOrder.getUpdateAt(), now);
 
-        if (duration.getSeconds() > 50) {
+        if (duration.getSeconds() > 5) {
             throw new UpdateStateException("Невозможно обновить заказ!");
         }
     }

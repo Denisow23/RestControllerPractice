@@ -2,6 +2,9 @@ package ru.denisov.RestControllerPractice.web.controller.v1;
 
 import net.javacrumbs.jsonunit.JsonAssert;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,16 +14,20 @@ import ru.denisov.RestControllerPractice.AbstractTestController;
 import ru.denisov.RestControllerPractice.StringTestUtils;
 import ru.denisov.RestControllerPractice.model.Client;
 import ru.denisov.RestControllerPractice.model.Order;
+import ru.denisov.RestControllerPractice.repository.exception.EntityNotFoundException;
 import ru.denisov.RestControllerPractice.service.OrderService;
 import ru.denisov.RestControllerPractice.web.mapper.v1.OrderMapper;
 import ru.denisov.RestControllerPractice.web.model.OrderListResponse;
 import ru.denisov.RestControllerPractice.web.model.OrderResponse;
+import ru.denisov.RestControllerPractice.web.model.UpsertClientRequest;
 import ru.denisov.RestControllerPractice.web.model.UpsertOrderRequest;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -159,6 +166,44 @@ public class OrderControllerTest extends AbstractTestController {
                 .andExpect(status().isNoContent());
 
         Mockito.verify(orderService, Mockito.times(1)).deleteById(1L);
+    }
+
+    @Test
+    public void whenFindByIdNotExistsOrder_thenReturnError() throws Exception {
+        Mockito.when(orderService.findById(500L)).thenThrow(
+                new EntityNotFoundException("Заказ с ID 500 не найден!")
+        );
+
+        var response = mockMvc.perform(get("/api/v1/order/500"))
+                .andExpect(status().isNotFound())
+                .andReturn()
+                .getResponse();
+
+        response.setCharacterEncoding("UTF-8");
+
+        String actualResponse = response.getContentAsString();
+        String expectedResponse = StringTestUtils.readStringFromResource("response/OrderControllerTest/find_order_by_id_not_exists.json");
+
+        Mockito.verify(orderService, Mockito.times(1)).findById(500L);
+
+        JsonAssert.assertJsonEquals(expectedResponse, actualResponse);
+    }
+
+
+    @Test
+    public void whenInvalidId_thenReturnError() throws Exception{
+        var response = mockMvc.perform(post("/api/v1/order")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(new UpsertOrderRequest(null, "Product", BigDecimal.valueOf(500L)))))
+                .andExpect(status().isBadRequest())
+                .andReturn()
+                .getResponse();
+        response.setCharacterEncoding("UTF-8");
+
+        String actualResponse = response.getContentAsString();
+        String expectedResponse = StringTestUtils.readStringFromResource("response/OrderControllerTest/empty_id_client_response.json");
+
+        JsonAssert.assertJsonEquals(expectedResponse, actualResponse);
     }
 
 

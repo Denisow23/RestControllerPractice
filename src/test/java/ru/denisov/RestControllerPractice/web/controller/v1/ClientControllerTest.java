@@ -156,7 +156,7 @@ public class ClientControllerTest extends AbstractTestController {
     }
 
     @Test
-    public void thenFindByIdNotExistedClient_thenReturnError() throws Exception {
+    public void whenFindByIdNotExistedClient_thenReturnError() throws Exception {
         Mockito.when(clientService.findById(500L))
                 .thenThrow(new EntityNotFoundException("Клиент с ID 500 не найден!"));
 

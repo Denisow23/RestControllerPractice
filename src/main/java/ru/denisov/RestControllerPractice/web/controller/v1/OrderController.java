@@ -1,5 +1,6 @@
 package ru.denisov.RestControllerPractice.web.controller.v1;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,7 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<OrderResponse> create(@RequestBody UpsertOrderRequest request) {
+    public ResponseEntity<OrderResponse> create(@RequestBody @Valid UpsertOrderRequest request) {
         Order newOrder = orderService.save(orderMapper.requestToOrder(request));
 
         return ResponseEntity.status(HttpStatus.CREATED).body(orderMapper.orderToResponse(newOrder));

@@ -16,8 +16,8 @@ import java.math.BigDecimal;
 public class UpsertOrderRequest {
 
 
-//    @NotNull(message = "ID клиента должно быть указано!")
-//    @Positive(message = "ID клиента должно быть больше 0!")
+    @NotNull(message = "ID клиента должно быть указано!")
+    @Positive(message = "ID клиента должно быть больше 0!")
     private Long clientId;
 
     @NotBlank(message = "Имя продукта должно быть указано!")
