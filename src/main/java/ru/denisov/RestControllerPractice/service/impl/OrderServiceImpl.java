@@ -28,7 +28,7 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findById(id)
                 .orElseThrow(
                         () -> new EntityNotFoundException(
-                                MessageFormat.format("Заказ с ID {} не найден!", id)
+                                MessageFormat.format("Заказ с ID {0} не найден!", id)
                         )
                 );
     }

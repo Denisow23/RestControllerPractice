@@ -4,8 +4,8 @@ import net.javacrumbs.jsonunit.JsonAssert;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import ru.denisov.RestControllerPractice.AbstractTestController;
 import ru.denisov.RestControllerPractice.StringTestUtils;
@@ -13,7 +13,6 @@ import ru.denisov.RestControllerPractice.model.Client;
 import ru.denisov.RestControllerPractice.model.Order;
 import ru.denisov.RestControllerPractice.service.OrderService;
 import ru.denisov.RestControllerPractice.web.mapper.v1.OrderMapper;
-import ru.denisov.RestControllerPractice.web.model.ClientResponse;
 import ru.denisov.RestControllerPractice.web.model.OrderListResponse;
 import ru.denisov.RestControllerPractice.web.model.OrderResponse;
 import ru.denisov.RestControllerPractice.web.model.UpsertOrderRequest;
@@ -119,4 +118,48 @@ public class OrderControllerTest extends AbstractTestController {
 
         JsonAssert.assertJsonEquals(expectedResponse, actualResponse);
     }
+
+    @Test
+    public void whenUpdateOrder_thenReturnUpdatedOrder() throws Exception {
+        UpsertOrderRequest request = new UpsertOrderRequest(1L, "New Updated Product 1", BigDecimal.valueOf(5000L));
+        Order updatedOrder = Order.builder()
+                .id(1L)
+                .product("New updated product 1")
+                .client(createClient(1L, null))
+                .updateAt(Instant.now())
+                .createAt(Instant.now())
+                .cost(BigDecimal.valueOf(5000L))
+                .build();
+
+        OrderResponse response = new OrderResponse(1L, "New Updated Product 1", BigDecimal.valueOf(5000L));
+
+        Mockito.when(orderMapper.requestToOrder(1L, request)).thenReturn(updatedOrder);
+        Mockito.when(orderService.update(updatedOrder)).thenReturn(updatedOrder);
+        Mockito.when(orderMapper.orderToResponse(updatedOrder)).thenReturn(response);
+
+        String actualResponse = mockMvc.perform(put("/api/v1/order/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        String expectedResponse = StringTestUtils.readStringFromResource("response/OrderControllerTest/update_order_response.json");
+
+        Mockito.verify(orderMapper, Mockito.times(1)).requestToOrder(1L, request);
+        Mockito.verify(orderService, Mockito.times(1)).update(updatedOrder);
+        Mockito.verify(orderMapper, Mockito.times(1)).orderToResponse(updatedOrder);
+
+        JsonAssert.assertJsonEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
+    public void whenDeleteOrder_thenReturnStatusNoContent() throws Exception {
+        mockMvc.perform(delete("/api/v1/order/1"))
+                .andExpect(status().isNoContent());
+
+        Mockito.verify(orderService, Mockito.times(1)).deleteById(1L);
+    }
+
+
 }
