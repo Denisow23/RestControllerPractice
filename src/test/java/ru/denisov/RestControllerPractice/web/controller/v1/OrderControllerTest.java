@@ -2,12 +2,7 @@ package ru.denisov.RestControllerPractice.web.controller.v1;
 
 import net.javacrumbs.jsonunit.JsonAssert;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import ru.denisov.RestControllerPractice.AbstractTestController;
@@ -191,7 +186,7 @@ public class OrderControllerTest extends AbstractTestController {
 
 
     @Test
-    public void whenInvalidId_thenReturnError() throws Exception{
+    public void whenNullId_thenReturnError() throws Exception{
         var response = mockMvc.perform(post("/api/v1/order")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(new UpsertOrderRequest(null, "Product", BigDecimal.valueOf(500L)))))
@@ -202,6 +197,70 @@ public class OrderControllerTest extends AbstractTestController {
 
         String actualResponse = response.getContentAsString();
         String expectedResponse = StringTestUtils.readStringFromResource("response/OrderControllerTest/empty_id_client_response.json");
+
+        JsonAssert.assertJsonEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
+    public void whenInvalidId_thenReturnError() throws Exception {
+        var response = mockMvc.perform(post("/api/v1/order")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(new UpsertOrderRequest(-5L, "Product", BigDecimal.valueOf(500L)))))
+                .andExpect(status().isBadRequest())
+                .andReturn()
+                .getResponse();
+        response.setCharacterEncoding("UTF-8");
+
+        String actualResponse = response.getContentAsString();
+        String expectedResponse = StringTestUtils.readStringFromResource("response/OrderControllerTest/invalid_id_client_response.json");
+
+        JsonAssert.assertJsonEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
+    public void whenInvalidNameProduct_thenReturnError() throws Exception {
+        var response = mockMvc.perform(post("/api/v1/order")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(new UpsertOrderRequest(1L, "", BigDecimal.valueOf(500L)))))
+                .andExpect(status().isBadRequest())
+                .andReturn()
+                .getResponse();
+        response.setCharacterEncoding("UTF-8");
+
+        String actualResponse = response.getContentAsString();
+        String expectedResponse = StringTestUtils.readStringFromResource("response/OrderControllerTest/invalid_product_name_response.json");
+
+        JsonAssert.assertJsonEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
+    public void whenNullCost_thenReturnError() throws Exception {
+        var response = mockMvc.perform(post("/api/v1/order")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(new UpsertOrderRequest(1L, "Product", null))))
+                .andExpect(status().isBadRequest())
+                .andReturn()
+                .getResponse();
+        response.setCharacterEncoding("UTF-8");
+
+        String actualResponse = response.getContentAsString();
+        String expectedResponse = StringTestUtils.readStringFromResource("response/OrderControllerTest/order_null_cost_response.json");
+
+        JsonAssert.assertJsonEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
+    public void whenInvalidCost_thenReturnError() throws Exception {
+        var response = mockMvc.perform(post("/api/v1/order")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(new UpsertOrderRequest(1L, "Product", BigDecimal.valueOf(-5L)))))
+                .andExpect(status().isBadRequest())
+                .andReturn()
+                .getResponse();
+        response.setCharacterEncoding("UTF-8");
+
+        String actualResponse = response.getContentAsString();
+        String expectedResponse = StringTestUtils.readStringFromResource("response/OrderControllerTest/order_invalid_cost_response.json");
 
         JsonAssert.assertJsonEquals(expectedResponse, actualResponse);
     }
