@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.denisov.RestControllerPractice.model.Order;
 import ru.denisov.RestControllerPractice.service.ClientService;
-import ru.denisov.RestControllerPractice.web.model.ClientResponse;
 import ru.denisov.RestControllerPractice.web.model.OrderListResponse;
 import ru.denisov.RestControllerPractice.web.model.OrderResponse;
 import ru.denisov.RestControllerPractice.web.model.UpsertOrderRequest;
@@ -16,14 +15,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderMapper {
 
-    private final ClientService clientService;
+    private final ClientService clientServiceImpl;
 
     public Order requestToOrder(UpsertOrderRequest request) {
         Order order = new Order();
 
         order.setCost(request.getCost());
         order.setProduct(request.getProduct());
-        order.setClient(clientService.findById(request.getClientId()));
+        order.setClient(clientServiceImpl.findById(request.getClientId()));
 
         return order;
     }

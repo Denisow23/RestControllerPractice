@@ -1,6 +1,7 @@
 package ru.denisov.RestControllerPractice.repository.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import ru.denisov.RestControllerPractice.model.Client;
 import ru.denisov.RestControllerPractice.model.Order;
@@ -18,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
-@Repository
+@Component
 public class InMemoryClientRepository implements ClientRepository {
 
     private OrderRepository orderRepository;

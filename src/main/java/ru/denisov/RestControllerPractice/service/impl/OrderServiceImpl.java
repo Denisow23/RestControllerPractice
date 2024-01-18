@@ -1,12 +1,14 @@
 package ru.denisov.RestControllerPractice.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.stereotype.Service;
 import ru.denisov.RestControllerPractice.model.Order;
 import ru.denisov.RestControllerPractice.repository.OrderRepository;
 import ru.denisov.RestControllerPractice.repository.exception.EntityNotFoundException;
 import ru.denisov.RestControllerPractice.service.OrderService;
 import ru.denisov.RestControllerPractice.service.exception.UpdateStateException;
+import ru.denisov.RestControllerPractice.web.model.OrderFilter;
 
 import java.text.MessageFormat;
 import java.time.Duration;
@@ -18,6 +20,12 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
+
+    @Override
+    public List<Order> filterBy(OrderFilter filter) {
+        throw new NotImplementedException();
+    }
+
     @Override
     public List<Order> findAll() {
         return orderRepository.findAll();
@@ -54,16 +62,5 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void deleteByIdIn(List<Long> ids) {
         orderRepository.deleteByIdIn(ids);
-    }
-
-    private void checkForUpdate(Long orderId) {
-        Order currentOrder = findById(orderId);
-        Instant now = Instant.now();
-
-        Duration duration = Duration.between(currentOrder.getUpdateAt(), now);
-
-        if (duration.getSeconds() > 5) {
-            throw new UpdateStateException("Невозможно обновить заказ!");
-        }
     }
 }

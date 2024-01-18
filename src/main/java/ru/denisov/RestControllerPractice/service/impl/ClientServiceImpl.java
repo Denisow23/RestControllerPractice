@@ -1,8 +1,10 @@
 package ru.denisov.RestControllerPractice.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.stereotype.Service;
 import ru.denisov.RestControllerPractice.model.Client;
+import ru.denisov.RestControllerPractice.model.Order;
 import ru.denisov.RestControllerPractice.repository.ClientRepository;
 import ru.denisov.RestControllerPractice.repository.exception.EntityNotFoundException;
 import ru.denisov.RestControllerPractice.service.ClientService;
@@ -42,5 +44,10 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public void deleteById(Long id) {
         clientRepository.deleteById(id);
+    }
+
+    @Override
+    public Client saveWithOrders(Client client, List<Order> orders) {
+        throw new NotImplementedException();
     }
 }
