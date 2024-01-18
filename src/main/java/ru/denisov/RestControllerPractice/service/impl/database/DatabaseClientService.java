@@ -3,6 +3,7 @@ package ru.denisov.RestControllerPractice.service.impl.database;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.denisov.RestControllerPractice.aop.Loggable;
 import ru.denisov.RestControllerPractice.model.Client;
 import ru.denisov.RestControllerPractice.model.Order;
 import ru.denisov.RestControllerPractice.repository.database.DatabaseClientRepository;
@@ -22,6 +23,7 @@ public class DatabaseClientService implements ClientService {
 
     private final DatabaseOrderRepository orderRepository;
     @Override
+    @Loggable
     public List<Client> findAll() {
         return clientRepository.findAll();
     }
@@ -55,6 +57,7 @@ public class DatabaseClientService implements ClientService {
 
     @Override
     @Transactional
+    @Loggable
     public Client saveWithOrders(Client client, List<Order> orders) {
         Client savedClient = clientRepository.save(client);
 
