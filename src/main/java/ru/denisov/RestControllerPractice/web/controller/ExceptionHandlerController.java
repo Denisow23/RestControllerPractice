@@ -9,11 +9,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.denisov.RestControllerPractice.repository.exception.EntityNotFoundException;
-import ru.denisov.RestControllerPractice.service.exception.UpdateStateException;
+import ru.denisov.RestControllerPractice.service.impl.exception.UpdateStateException;
 import ru.denisov.RestControllerPractice.web.model.ErrorResponse;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestControllerAdvice
 @Slf4j

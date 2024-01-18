@@ -1,12 +1,11 @@
-package ru.denisov.RestControllerPractice.repository.impl;
+package ru.denisov.RestControllerPractice.repository.inmemory.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 import ru.denisov.RestControllerPractice.model.Client;
 import ru.denisov.RestControllerPractice.model.Order;
-import ru.denisov.RestControllerPractice.repository.ClientRepository;
-import ru.denisov.RestControllerPractice.repository.OrderRepository;
+import ru.denisov.RestControllerPractice.repository.inmemory.ClientRepository;
+import ru.denisov.RestControllerPractice.repository.inmemory.OrderRepository;
 import ru.denisov.RestControllerPractice.repository.exception.EntityNotFoundException;
 import ru.denisov.RestControllerPractice.repository.utils.BeanUtils;
 

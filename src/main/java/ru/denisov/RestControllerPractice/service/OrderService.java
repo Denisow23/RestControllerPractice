@@ -1,8 +1,7 @@
 package ru.denisov.RestControllerPractice.service;
 
-import ru.denisov.RestControllerPractice.model.Client;
 import ru.denisov.RestControllerPractice.model.Order;
-import ru.denisov.RestControllerPractice.service.exception.UpdateStateException;
+import ru.denisov.RestControllerPractice.service.impl.exception.UpdateStateException;
 import ru.denisov.RestControllerPractice.web.model.OrderFilter;
 
 import java.time.Duration;

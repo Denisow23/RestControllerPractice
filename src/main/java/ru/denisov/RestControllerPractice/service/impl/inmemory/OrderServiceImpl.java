@@ -1,18 +1,15 @@
-package ru.denisov.RestControllerPractice.service.impl;
+package ru.denisov.RestControllerPractice.service.impl.inmemory;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.stereotype.Service;
 import ru.denisov.RestControllerPractice.model.Order;
-import ru.denisov.RestControllerPractice.repository.OrderRepository;
+import ru.denisov.RestControllerPractice.repository.inmemory.OrderRepository;
 import ru.denisov.RestControllerPractice.repository.exception.EntityNotFoundException;
 import ru.denisov.RestControllerPractice.service.OrderService;
-import ru.denisov.RestControllerPractice.service.exception.UpdateStateException;
 import ru.denisov.RestControllerPractice.web.model.OrderFilter;
 
 import java.text.MessageFormat;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.List;
 
 @Service

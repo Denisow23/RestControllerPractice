@@ -2,7 +2,7 @@ package ru.denisov.RestControllerPractice.web.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.denisov.RestControllerPractice.validation.OrderFilterValid;
+import ru.denisov.RestControllerPractice.web.validation.OrderFilterValid;
 
 import java.math.BigDecimal;
 import java.time.Instant;

@@ -1,4 +1,4 @@
-package ru.denisov.RestControllerPractice.service.exception;
+package ru.denisov.RestControllerPractice.service.impl.exception;
 
 public class UpdateStateException extends RuntimeException{
 

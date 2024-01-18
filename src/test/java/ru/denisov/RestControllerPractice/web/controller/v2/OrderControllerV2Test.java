@@ -1,4 +1,4 @@
-package ru.denisov.RestControllerPractice.web.controller.v1;
+package ru.denisov.RestControllerPractice.web.controller.v2;
 
 import net.javacrumbs.jsonunit.JsonAssert;
 import org.junit.jupiter.api.Test;
@@ -10,9 +10,9 @@ import ru.denisov.RestControllerPractice.StringTestUtils;
 import ru.denisov.RestControllerPractice.model.Client;
 import ru.denisov.RestControllerPractice.model.Order;
 import ru.denisov.RestControllerPractice.repository.exception.EntityNotFoundException;
-import ru.denisov.RestControllerPractice.service.OrderService;
-import ru.denisov.RestControllerPractice.service.impl.inmemory.OrderServiceImpl;
+import ru.denisov.RestControllerPractice.service.impl.database.DatabaseOrderService;
 import ru.denisov.RestControllerPractice.web.mapper.v1.OrderMapper;
+import ru.denisov.RestControllerPractice.web.mapper.v2.OrderMapperV2;
 import ru.denisov.RestControllerPractice.web.model.OrderListResponse;
 import ru.denisov.RestControllerPractice.web.model.OrderResponse;
 import ru.denisov.RestControllerPractice.web.model.UpsertOrderRequest;
@@ -23,15 +23,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class OrderControllerTest extends AbstractTestController {
+public class OrderControllerV2Test extends AbstractTestController {
 
     @MockBean
-    private OrderServiceImpl orderServiceImpl;
+    private DatabaseOrderService orderService;
 
     @MockBean
-    private OrderMapper orderMapper;
+    private OrderMapperV2 orderMapper;
 
     @Test
     public void whenFindAll_thenReturnOrders() throws Exception {
@@ -47,10 +48,10 @@ public class OrderControllerTest extends AbstractTestController {
 
         OrderListResponse orderListResponse = new OrderListResponse(orderResponses);
 
-        Mockito.when(orderServiceImpl.findAll()).thenReturn(orderList);
+        Mockito.when(orderService.findAll()).thenReturn(orderList);
         Mockito.when(orderMapper.orderListToOrderListResponse(orderList)).thenReturn(orderListResponse);
 
-        String actualResponse = mockMvc.perform(get("/api/v1/order"))
+        String actualResponse = mockMvc.perform(get("/api/v2/order"))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
@@ -58,7 +59,7 @@ public class OrderControllerTest extends AbstractTestController {
 
         String expectedResponse = StringTestUtils.readStringFromResource("response/OrderControllerTest/find_all_orders_response.json");
 
-        Mockito.verify(orderServiceImpl, Mockito.times(1)).findAll();
+        Mockito.verify(orderService, Mockito.times(1)).findAll();
         Mockito.verify(orderMapper, Mockito.times(1)).orderListToOrderListResponse(orderList);
 
         JsonAssert.assertJsonEquals(expectedResponse, actualResponse);
@@ -70,10 +71,10 @@ public class OrderControllerTest extends AbstractTestController {
 
         OrderResponse orderResponse = createOrderResponse(1L, 500L);
 
-        Mockito.when(orderServiceImpl.findById(1L)).thenReturn(order);
+        Mockito.when(orderService.findById(1L)).thenReturn(order);
         Mockito.when(orderMapper.orderToResponse(order)).thenReturn(orderResponse);
 
-        String actualResponse = mockMvc.perform(get("/api/v1/order/1"))
+        String actualResponse = mockMvc.perform(get("/api/v2/order/1"))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
@@ -81,7 +82,7 @@ public class OrderControllerTest extends AbstractTestController {
 
         String expectedResponse = StringTestUtils.readStringFromResource("response/OrderControllerTest/find_order_by_id_response.json");
 
-        Mockito.verify(orderServiceImpl, Mockito.times(1)).findById(1L);
+        Mockito.verify(orderService, Mockito.times(1)).findById(1L);
         Mockito.verify(orderMapper, Mockito.times(1)).orderToResponse(order);
 
         JsonAssert.assertJsonEquals(expectedResponse, actualResponse);
@@ -100,12 +101,12 @@ public class OrderControllerTest extends AbstractTestController {
         UpsertOrderRequest request = new UpsertOrderRequest(1L, "Test product 1", BigDecimal.valueOf(500L));
 
         Mockito.when(orderMapper.requestToOrder(request)).thenReturn(order);
-        Mockito.when(orderServiceImpl.save(order)).thenReturn(createdOrder);
+        Mockito.when(orderService.save(order)).thenReturn(createdOrder);
         Mockito.when(orderMapper.orderToResponse(createdOrder)).thenReturn(orderResponse);
 
-        String actualResponse = mockMvc.perform(post("/api/v1/order")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+        String actualResponse = mockMvc.perform(post("/api/v2/order")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andReturn()
                 .getResponse()
@@ -114,7 +115,7 @@ public class OrderControllerTest extends AbstractTestController {
         String expectedResponse = StringTestUtils.readStringFromResource("response/OrderControllerTest/create_order_response.json");
 
         Mockito.verify(orderMapper, Mockito.times(1)).requestToOrder(request);
-        Mockito.verify(orderServiceImpl, Mockito.times(1)).save(order);
+        Mockito.verify(orderService, Mockito.times(1)).save(order);
         Mockito.verify(orderMapper, Mockito.times(1)).orderToResponse(createdOrder);
 
         JsonAssert.assertJsonEquals(expectedResponse, actualResponse);
@@ -135,12 +136,12 @@ public class OrderControllerTest extends AbstractTestController {
         OrderResponse response = new OrderResponse(1L, "New Updated Product 1", BigDecimal.valueOf(5000L));
 
         Mockito.when(orderMapper.requestToOrder(1L, request)).thenReturn(updatedOrder);
-        Mockito.when(orderServiceImpl.update(updatedOrder)).thenReturn(updatedOrder);
+        Mockito.when(orderService.update(updatedOrder)).thenReturn(updatedOrder);
         Mockito.when(orderMapper.orderToResponse(updatedOrder)).thenReturn(response);
 
-        String actualResponse = mockMvc.perform(put("/api/v1/order/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+        String actualResponse = mockMvc.perform(put("/api/v2/order/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
@@ -148,7 +149,7 @@ public class OrderControllerTest extends AbstractTestController {
         String expectedResponse = StringTestUtils.readStringFromResource("response/OrderControllerTest/update_order_response.json");
 
         Mockito.verify(orderMapper, Mockito.times(1)).requestToOrder(1L, request);
-        Mockito.verify(orderServiceImpl, Mockito.times(1)).update(updatedOrder);
+        Mockito.verify(orderService, Mockito.times(1)).update(updatedOrder);
         Mockito.verify(orderMapper, Mockito.times(1)).orderToResponse(updatedOrder);
 
         JsonAssert.assertJsonEquals(expectedResponse, actualResponse);
@@ -156,19 +157,19 @@ public class OrderControllerTest extends AbstractTestController {
 
     @Test
     public void whenDeleteOrder_thenReturnStatusNoContent() throws Exception {
-        mockMvc.perform(delete("/api/v1/order/1"))
+        mockMvc.perform(delete("/api/v2/order/1"))
                 .andExpect(status().isNoContent());
 
-        Mockito.verify(orderServiceImpl, Mockito.times(1)).deleteById(1L);
+        Mockito.verify(orderService, Mockito.times(1)).deleteById(1L);
     }
 
     @Test
     public void whenFindByIdNotExistsOrder_thenReturnError() throws Exception {
-        Mockito.when(orderServiceImpl.findById(500L)).thenThrow(
+        Mockito.when(orderService.findById(500L)).thenThrow(
                 new EntityNotFoundException("Заказ с ID 500 не найден!")
         );
 
-        var response = mockMvc.perform(get("/api/v1/order/500"))
+        var response = mockMvc.perform(get("/api/v2/order/500"))
                 .andExpect(status().isNotFound())
                 .andReturn()
                 .getResponse();
@@ -178,7 +179,7 @@ public class OrderControllerTest extends AbstractTestController {
         String actualResponse = response.getContentAsString();
         String expectedResponse = StringTestUtils.readStringFromResource("response/OrderControllerTest/find_order_by_id_not_exists.json");
 
-        Mockito.verify(orderServiceImpl, Mockito.times(1)).findById(500L);
+        Mockito.verify(orderService, Mockito.times(1)).findById(500L);
 
         JsonAssert.assertJsonEquals(expectedResponse, actualResponse);
     }
@@ -186,9 +187,9 @@ public class OrderControllerTest extends AbstractTestController {
 
     @Test
     public void whenNullId_thenReturnError() throws Exception{
-        var response = mockMvc.perform(post("/api/v1/order")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(new UpsertOrderRequest(null, "Product", BigDecimal.valueOf(500L)))))
+        var response = mockMvc.perform(post("/api/v2/order")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new UpsertOrderRequest(null, "Product", BigDecimal.valueOf(500L)))))
                 .andExpect(status().isBadRequest())
                 .andReturn()
                 .getResponse();
@@ -202,9 +203,9 @@ public class OrderControllerTest extends AbstractTestController {
 
     @Test
     public void whenInvalidId_thenReturnError() throws Exception {
-        var response = mockMvc.perform(post("/api/v1/order")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(new UpsertOrderRequest(-5L, "Product", BigDecimal.valueOf(500L)))))
+        var response = mockMvc.perform(post("/api/v2/order")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new UpsertOrderRequest(-5L, "Product", BigDecimal.valueOf(500L)))))
                 .andExpect(status().isBadRequest())
                 .andReturn()
                 .getResponse();
@@ -218,9 +219,9 @@ public class OrderControllerTest extends AbstractTestController {
 
     @Test
     public void whenInvalidNameProduct_thenReturnError() throws Exception {
-        var response = mockMvc.perform(post("/api/v1/order")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(new UpsertOrderRequest(1L, "", BigDecimal.valueOf(500L)))))
+        var response = mockMvc.perform(post("/api/v2/order")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new UpsertOrderRequest(1L, "", BigDecimal.valueOf(500L)))))
                 .andExpect(status().isBadRequest())
                 .andReturn()
                 .getResponse();
@@ -234,9 +235,9 @@ public class OrderControllerTest extends AbstractTestController {
 
     @Test
     public void whenNullCost_thenReturnError() throws Exception {
-        var response = mockMvc.perform(post("/api/v1/order")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(new UpsertOrderRequest(1L, "Product", null))))
+        var response = mockMvc.perform(post("/api/v2/order")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new UpsertOrderRequest(1L, "Product", null))))
                 .andExpect(status().isBadRequest())
                 .andReturn()
                 .getResponse();
@@ -250,9 +251,9 @@ public class OrderControllerTest extends AbstractTestController {
 
     @Test
     public void whenInvalidCost_thenReturnError() throws Exception {
-        var response = mockMvc.perform(post("/api/v1/order")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(new UpsertOrderRequest(1L, "Product", BigDecimal.valueOf(-5L)))))
+        var response = mockMvc.perform(post("/api/v2/order")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new UpsertOrderRequest(1L, "Product", BigDecimal.valueOf(-5L)))))
                 .andExpect(status().isBadRequest())
                 .andReturn()
                 .getResponse();
@@ -263,6 +264,5 @@ public class OrderControllerTest extends AbstractTestController {
 
         JsonAssert.assertJsonEquals(expectedResponse, actualResponse);
     }
-
 
 }

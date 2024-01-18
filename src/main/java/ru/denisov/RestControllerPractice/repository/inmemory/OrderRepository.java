@@ -1,4 +1,4 @@
-package ru.denisov.RestControllerPractice.repository;
+package ru.denisov.RestControllerPractice.repository.inmemory;
 
 
 import ru.denisov.RestControllerPractice.model.Order;

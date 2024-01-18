@@ -1,4 +1,4 @@
-package ru.denisov.RestControllerPractice.validation;
+package ru.denisov.RestControllerPractice.web.validation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
